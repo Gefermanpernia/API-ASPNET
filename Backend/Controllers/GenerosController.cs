@@ -1,6 +1,7 @@
 ﻿using Backend.Entidades;
 using Backend.Repositorios;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,15 +25,17 @@ namespace Backend.Controllers
             return repositorio.ObtenerTodosLosGeneros();
         }
 
-        [HttpPost]
-        public void Post()
-        {
-
-        }
+        
 
         [HttpGet("{Id:int}/{nombre=Geferman}")] // api/generos/3/gefermna
-        public async Task<ActionResult<Genero>> Get(int Id, string nombre)
+        public async Task<ActionResult<Genero>> Get(int Id, [FromHeader] string nombre) // BindRequired es que sera requerido ese parametro
         {
+            if (ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
             var genero = await repositorio.ObtenerPorId(Id);
 
             if (genero == null)
@@ -42,15 +45,22 @@ namespace Backend.Controllers
 
             return genero;
         }
+
+        [HttpPost]
+        public ActionResult Post([FromBody] Genero genero)
+        {
+            return NoContent();
+        }
+
         [HttpPut]
-        public ActionResult Put()
+        public ActionResult Put([FromBody] Genero genero)
         {
             return NoContent();
         }
         [HttpDelete]
         public ActionResult Delete()
         {
-            return NoContent();
+            return NoContent(); 
         }
 
 
