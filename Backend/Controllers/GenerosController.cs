@@ -2,6 +2,7 @@
 using Backend.Repositorios;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -18,8 +19,7 @@ namespace Backend.Controllers
         [HttpGet]        
         [HttpGet("Listado")]        //api/genero/listado
         [HttpGet("/Listadogenero")] // /listadogenero
-
-        public List<Genero> Get()
+        public ActionResult<List<Genero>> Get()
         {
             return repositorio.ObtenerTodosLosGeneros();
         }
@@ -31,25 +31,26 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{Id:int}/{nombre=Geferman}")] // api/generos/3/gefermna
-        public Genero Get(int Id, string nombre)
+        public async Task<ActionResult<Genero>> Get(int Id, string nombre)
         {
-            var genero = repositorio.ObtenerPorId(Id);
+            var genero = await repositorio.ObtenerPorId(Id);
 
             if (genero == null)
             {
-                //return NotFound();
+                return NotFound();
             }
 
             return genero;
         }
         [HttpPut]
-        public void Put()
+        public ActionResult Put()
         {
+            return NoContent();
         }
         [HttpDelete]
-        public void Delete()
+        public ActionResult Delete()
         {
-
+            return NoContent();
         }
 
 
