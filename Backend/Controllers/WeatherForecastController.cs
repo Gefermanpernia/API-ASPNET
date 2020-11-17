@@ -43,7 +43,7 @@ namespace Backend.Controllers
             .ToArray();
         }
 
-        [HttpGet("Guid")]
+        [HttpGet("guid")]
         public Guid ObtenerGUIDweatherForecastController()
         {
             return repositorio.ObtenerGUID();
