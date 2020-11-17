@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace Backend.Controllers
 {
     [Route("api/generos")]
+    [ApiController]
     public class GenerosController: ControllerBase
     {
         private readonly IRepositorio repositorio;
@@ -30,11 +31,6 @@ namespace Backend.Controllers
         [HttpGet("{Id:int}/{nombre=Geferman}")] // api/generos/3/gefermna
         public async Task<ActionResult<Genero>> Get(int Id, [FromHeader] string nombre) // BindRequired es que sera requerido ese parametro
         {
-            if (ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
 
             var genero = await repositorio.ObtenerPorId(Id);
 
