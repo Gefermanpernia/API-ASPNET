@@ -1,4 +1,5 @@
 ﻿using Backend.Entidades;
+using Backend.Filtros;
 using Backend.Repositorios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ namespace Backend.Controllers
         [HttpGet("Listado")]        //api/genero/listado
         [HttpGet("/Listadogenero")] // /listadogenero
         //[ResponseCache(Duration = 60)] //filtro de accion
+        [ServiceFilter(typeof(MiFiltroDeAccion))]
         public ActionResult<List<Genero>> Get()
         {
             logger.LogInformation("Vamos a mostrar los generos");

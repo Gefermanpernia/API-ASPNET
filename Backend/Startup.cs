@@ -1,4 +1,5 @@
 using Backend.Controllers;
+using Backend.Filtros;
 using Backend.Repositorios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -31,11 +32,17 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddResponseCaching();
             services.AddScoped<IRepositorio, RepositorioEnMemoria>();
             services.AddScoped<WeatherForecastController>();
-            services.AddControllers();
+            services.AddTransient<MiFiltroDeAccion>();
+            services.AddControllers(options => 
+            {
+                options.Filters.Add(typeof(FiltroDeExcepcion));
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
