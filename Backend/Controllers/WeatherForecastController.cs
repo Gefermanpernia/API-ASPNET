@@ -42,5 +42,10 @@ namespace Backend.Controllers
             })
             .ToArray();
         }
+
+        public Guid ObtenerGUIDweatherForecastController()
+        {
+            return repositorio.ObtenerGUID();
+        }
     }
 }
