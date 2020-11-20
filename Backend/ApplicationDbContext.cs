@@ -18,5 +18,6 @@ namespace Backend
         // y tambien le vamos a decir en base a que modelos o entidades vamos a basar 
         // las tablas
         public DbSet<Genero> Generos{ get; set; }
+        public DbSet<Actor> Actores { get; set; }
     }
 }

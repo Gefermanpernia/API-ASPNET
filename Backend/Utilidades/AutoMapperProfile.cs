@@ -17,6 +17,10 @@ namespace Backend.Utilidades
             CreateMap<Genero, GeneroDTO>().ReverseMap();
             // POST
             CreateMap<GeneroCreacionDTO, Genero>();
+            CreateMap<Actor, ActorDTO>().ReverseMap();
+            // POST
+            CreateMap<ActorCreacionDTO, Actor>()
+                    .ForMember(x => x.Foto, options => options.Ignore());
         }
     }
 }
