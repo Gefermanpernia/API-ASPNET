@@ -32,7 +32,14 @@ namespace Backend
         public void ConfigureServices(IServiceCollection services)
         {
 
-
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    var frontendURL = Configuration.GetValue<string>("frontend_url");
+                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader();
+                });
+            });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddResponseCaching();
             services.AddControllers(options => 
@@ -60,6 +67,8 @@ namespace Backend
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
 
