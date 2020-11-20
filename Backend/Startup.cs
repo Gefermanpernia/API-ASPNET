@@ -42,7 +42,9 @@ namespace Backend
                 options.AddDefaultPolicy(builder =>
                 {
                     var frontendURL = Configuration.GetValue<string>("frontend_url");
-                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader();
+                    builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader()
+                    //se expone la cabecera 
+                    .WithExposedHeaders(new string[] { "CantidadTotalRegistors"}) ;
                 });
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
