@@ -19,7 +19,7 @@ namespace Backend.Controllers
     [Route("api/generos")]
     [ApiController]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class GenerosController: ControllerBase
+    public class GenerosController : ControllerBase
     {
         private readonly ILogger<GenerosController> logger;
         private readonly ApplicationDbContext context;
@@ -40,10 +40,8 @@ namespace Backend.Controllers
             // asi se hace el mapeo de genero a GeneroDTO 
             var queryable = context.Generos.AsQueryable();
             await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
-            var generos = queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO).ToListAsync();
+            var generos = await queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO).ToListAsync();
             return mapper.Map<List<GeneroDTO>>(generos);
-
-
         }
 
 

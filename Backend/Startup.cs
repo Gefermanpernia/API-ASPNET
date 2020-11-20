@@ -44,7 +44,7 @@ namespace Backend
                     var frontendURL = Configuration.GetValue<string>("frontend_url");
                     builder.WithOrigins(frontendURL).AllowAnyMethod().AllowAnyHeader()
                     //se expone la cabecera 
-                    .WithExposedHeaders(new string[] { "CantidadTotalRegistors"}) ;
+                    .WithExposedHeaders(new string[] { "cantidadTotalRegistros" }) ;
                 });
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
