@@ -47,10 +47,16 @@ namespace Backend.Controllers
 
 
         [HttpGet("{Id:int}")] // api/generos/3
-        public ActionResult<Genero> Get(int Id)
+        public async Task<ActionResult<GeneroDTO>> Get(int Id)
         {
+            var genero = await context.Generos.FirstOrDefaultAsync(x => x.Id == Id);
 
-            throw new NotImplementedException();
+            if (genero == null)
+            {
+                return NotFound();
+            }
+
+            return mapper.Map<GeneroDTO>(genero);
         }
 
         [HttpPost]
@@ -62,11 +68,20 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public ActionResult Put([FromBody] Genero genero)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int Id, [FromBody] GeneroCreacionDTO generoCreacionDTO)
         {
-            throw new NotImplementedException();
+            var genero = await context.Generos.FirstOrDefaultAsync(x => x.Id == Id);
 
+            if (genero == null)
+            {
+                return NotFound();
+            }
+
+            genero = mapper.Map(generoCreacionDTO, genero);
+
+            await context.SaveChangesAsync();
+            return NoContent();
         }
         [HttpDelete]
         public ActionResult Delete()
