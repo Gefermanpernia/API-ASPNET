@@ -23,12 +23,12 @@ namespace Backend.Controllers
             this.mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ActorCreacionDTO actorCreacionDTO)
+        [HttpPost]              // con fromForm podremos enviar la foto
+        public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO)
         {
-            var actor = mapper.Map<Actor>(actorCreacionDTO);
-            context.Add(actor);
-            await context.SaveChangesAsync();
+            //var actor = mapper.Map<Actor>(actorCreacionDTO);
+            //context.Add(actor);
+            //await context.SaveChangesAsync();
             return NoContent();
         }
     }
