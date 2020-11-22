@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Backend.DTOs;
 using Backend.Entidades;
+using Backend.Migrations;
 using Backend.Utilidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,16 @@ namespace Backend.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
+        {
+            // paginando y ordenando por nombre
+            var queryable = context.Actores.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
+            var actors = await queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO).ToListAsync();
+            return mapper.Map<List<ActorDTO>>(actors);
+        }
+
         [HttpPost]              // con fromForm podremos enviar la foto
         public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO)
         {
@@ -40,5 +52,22 @@ namespace Backend.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe = await context.Actores.AnyAsync(x => x.Id == id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
+            context.Remove(new Actor() { Id = id });
+            await context.SaveChangesAsync();
+            return NoContent();
+
+        }
+
     }
 }
