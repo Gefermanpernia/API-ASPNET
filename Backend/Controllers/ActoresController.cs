@@ -39,6 +39,38 @@ namespace Backend.Controllers
             return mapper.Map<List<ActorDTO>>(actors);
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ActorDTO>> Get(int id)
+        {
+            var actor = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (actor == null)
+            {
+                return NotFound();
+            }
+            return mapper.Map<ActorDTO>(actor);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, [FromForm] ActorCreacionDTO actorCreacionDTO)
+        {
+            var actor = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (actor == null)
+            {
+                return NotFound();
+            }
+
+            actor = mapper.Map(actorCreacionDTO, actor);
+
+            if (actorCreacionDTO.Foto != null)
+            {
+                actor.Foto = await almacenadorArchivos.EditarArchivo(contenedor, actorCreacionDTO.Foto, actor.Foto);
+            }
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+
         [HttpPost]              // con fromForm podremos enviar la foto
         public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO)
         {
@@ -56,15 +88,16 @@ namespace Backend.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await context.Actores.AnyAsync(x => x.Id == id);
-
-            if (!existe)
+            var actor = await context.Actores.FirstOrDefaultAsync(actor => actor.Id == id);
+            if (actor == null)
             {
                 return NotFound();
             }
 
-            context.Remove(new Actor() { Id = id });
+            context.Remove(actor);
             await context.SaveChangesAsync();
+
+            await almacenadorArchivos.BorrarArchivo(actor.Foto, contenedor);
             return NoContent();
 
         }
