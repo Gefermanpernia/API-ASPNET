@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,14 +36,38 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // configuracion autoMapper
             services.AddAutoMapper(typeof(Startup));
 
+            // pasandole a mapper el geometry factory
+            services.AddSingleton(provider =>
+            
+                new MapperConfiguration(config =>
+                {
+                    var geometryfactory = provider.GetRequiredService<GeometryFactory>();
+                    config.AddProfile(new AutoMapperProfile(geometryfactory));
+
+                }).CreateMapper());
+
+            // Geometryfactory para obtener querys espaciales
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+
+
+            // configuracion para almacenar las fotos sea en local o azure
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 
+            //
             services.AddHttpContextAccessor();
 
+
+            // Base de datos
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("defaultConnection"),
+                sqlServe => sqlServe.UseNetTopologySuite()));
+
+
+
+            // Configuracion para permitir metodos abrir cors
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -54,6 +80,8 @@ namespace Backend
             });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddResponseCaching();
+
+
             services.AddControllers(options => 
             {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
