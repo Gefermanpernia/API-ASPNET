@@ -29,7 +29,6 @@ namespace Backend.Utilidades
             var blob = cliente.GetBlobClient(archivoNombre);
             await blob.UploadAsync(archivo.OpenReadStream());
             return blob.Uri.ToString();
-
         }
 
         // borrar archivo
